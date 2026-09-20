@@ -1,0 +1,6 @@
+{
+  "name": "Echkili Assurances - Agent Général AXA Assurances Maroc",
+  "description": "Site officiel d'Echkili Assurances, Agent Général AXA Assurances Maroc à Marrakech Mhamid. Assurances particuliers, professionnels, accidents du travail, épargne-retraite, santé et assistance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
