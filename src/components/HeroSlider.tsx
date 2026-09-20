@@ -102,9 +102,9 @@ export default function HeroSlider({
           );
         })}
 
-        {/* AXA WATERMARK GRID PATTERN on the left side (as in screenshots 1, 2, 3) */}
+        {/* AXA WATERMARK GRID PATTERN on the left side */}
         <div 
-          className="absolute top-0 bottom-0 left-0 w-full lg:w-[50%] z-20 pointer-events-none overflow-hidden opacity-[0.06] leading-none select-none font-black text-3xl tracking-widest text-[#0F2B5C]"
+          className="absolute top-0 bottom-0 left-0 w-full lg:w-[50%] z-10 pointer-events-none overflow-hidden opacity-[0.08] leading-none select-none font-black text-3xl tracking-widest text-[#0F2B5C]"
           aria-hidden="true"
         >
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-y-12 gap-x-8 p-6 transform -rotate-1 origin-top-left">
@@ -114,28 +114,39 @@ export default function HeroSlider({
           </div>
         </div>
 
-        {/* LARGE STYLIZED "AE" WATERMARK OVERLAY (Official Monogram recreation) */}
+        {/* FLOATING AE LOGO EMBLEM (100% DESIGN COMME DANS LA PHOTO DU HEADER/HERO) */}
         <div 
-          className="hidden md:block absolute left-[38%] lg:left-[42%] bottom-[-5%] z-20 pointer-events-none w-[340px] h-[340px] opacity-[0.16] transition-transform duration-700 select-none"
+          className="hidden md:flex absolute left-[44%] lg:left-[45%] xl:left-[46%] bottom-0 z-20 pointer-events-none w-[320px] h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] select-none items-end justify-center"
           aria-hidden="true"
         >
-          <svg viewBox="0 0 100 100" fill="none" className="w-full h-full">
-            {/* Red dynamic diagonal slash */}
-            <path d="M 41,12 L 51.5,12 L 72,88 L 61.5,88 Z" fill="#E11D2A" />
-            {/* E - Top Bar */}
-            <path d="M 54.5,23.5 L 85,23.5 A 6.75 6.75 0 0 1 85,37 L 58.2,37 Z" fill="#0F2B5C" />
-            {/* E - Middle Bar */}
-            <path d="M 59.8,43.5 L 81,43.5 A 6.75 6.75 0 0 1 81,57 L 63.5,57 Z" fill="#0F2B5C" />
-            {/* E - Bottom Bar */}
-            <path d="M 65.2,63.5 L 85,63.5 A 6.75 6.75 0 0 1 85,77 L 69,77 Z" fill="#0F2B5C" />
-            {/* A - Body with rounded top-left apex and inner counter */}
-            <path
-              d="M 11,77 L 22.5,77 L 27.8,57 L 53,57 L 43.5,21 L 34,21 C 23.5,21 20,25.5 18,35 L 11,77 Z M 31.5,43.5 L 49.3,43.5 L 45.3,28.5 L 36.5,28.5 Z"
-              fill="#0F2B5C"
-              fillRule="evenodd"
+          <svg viewBox="0 0 100 100" fill="none" className="w-full h-full overflow-visible">
+            {/* Letters A & E in Slate-Steel Blue */}
+            <g fill="#68829E" fillOpacity="0.75">
+              {/* E - Top Bar with rounded stadium cap */}
+              <path d="M 54.5,23.5 L 85,23.5 A 6.75 6.75 0 0 1 85,37 L 58.2,37 Z" />
+
+              {/* E - Middle Bar with rounded stadium cap */}
+              <path d="M 59.8,43.5 L 81,43.5 A 6.75 6.75 0 0 1 81,57 L 63.5,57 Z" />
+
+              {/* E - Bottom Bar with rounded stadium cap */}
+              <path d="M 65.2,63.5 L 85,63.5 A 6.75 6.75 0 0 1 85,77 L 69,77 Z" />
+
+              {/* A - Body with rounded top-left apex and inner counter */}
+              <path
+                d="M 11,77 L 22.5,77 L 27.8,57 L 53,57 L 43.5,21 L 34,21 C 23.5,21 20,25.5 18,35 L 11,77 Z M 31.5,43.5 L 49.3,43.5 L 45.3,28.5 L 36.5,28.5 Z"
+                fillRule="evenodd"
+              />
+            </g>
+
+            {/* AXA Red dynamic diagonal slash slicing through from top to bottom edge */}
+            <path 
+              d="M 40,6 L 51.5,6 L 74,96 L 62.5,96 Z" 
+              fill="#E11D2A" 
+              fillOpacity="0.88" 
             />
           </svg>
         </div>
+
 
         {/* SLIDE CONTENT AREA (Left aligned, high contrast, clean) */}
         <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 sm:py-16">
@@ -214,8 +225,8 @@ export default function HeroSlider({
           <ChevronRight className="w-5 h-5" />
         </button>
 
-        {/* PAGINATION DOTS & PILL AT BOTTOM (matching screenshots 1, 2, 3) */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+        {/* PAGINATION DOTS & PILL AT BOTTOM (Centered under the emblem as in reference) */}
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
           {HERO_SLIDES.map((slide, index) => {
             const isActive = index === currentSlide;
             return (
@@ -226,7 +237,7 @@ export default function HeroSlider({
                 className={`transition-all duration-300 rounded-full ${
                   isActive 
                     ? 'w-7 h-2.5 bg-[#0072F5]' 
-                    : 'w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400'
+                    : 'w-2.5 h-2.5 bg-[#B5CDE6] hover:bg-[#8CAFD6]'
                 }`}
               />
             );

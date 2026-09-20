@@ -12,19 +12,19 @@ export default function Logo({
   const isLight = variant === 'light'; // light background -> dark text
   
   return (
-    <div className={`flex items-center gap-3 sm:gap-3.5 select-none ${className}`}>
+    <div className={`flex items-center gap-3 sm:gap-4 select-none ${className}`}>
       {/* Monogram AE Icon - Exact vector recreation of official photo */}
-      <div className="relative flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center">
+      <div className="relative flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center filter drop-shadow-md">
         <svg 
           viewBox="0 0 100 100" 
           fill="none" 
           xmlns="http://www.w3.org/2000/svg" 
-          className="w-full h-full drop-shadow-2xs overflow-visible"
+          className="w-full h-full overflow-visible"
           aria-label="Logo Assurances Echkili - Monogramme AE"
         >
-          {/* Red dynamic diagonal slash (slicing through A & E) */}
+          {/* Red dynamic diagonal slash (slicing through A & E) in official AXA Red */}
           <path
-            d="M 41,12 L 51.5,12 L 72,88 L 61.5,88 Z"
+            d="M 40,8 L 51,8 L 73,92 L 62,92 Z"
             fill="#E11D2A"
           />
 
@@ -72,7 +72,7 @@ export default function Logo({
       <div className="flex flex-col leading-none">
         <div className="flex items-center gap-1.5">
           <span
-            className={`font-black italic text-[17px] sm:text-[21px] tracking-tight transition-colors ${
+            className={`font-black italic text-[18px] sm:text-[22px] lg:text-[24px] tracking-tight transition-colors ${
               isLight ? 'text-[#0F2B5C]' : 'text-white'
             }`}
             style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
@@ -82,12 +82,9 @@ export default function Logo({
         </div>
 
         {showSubtext && (
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#E11D2A] inline-flex items-center gap-1">
-              <span>AGENT GÉNÉRAL AXA</span>
-              <span className={`text-[9px] font-semibold tracking-normal ${isLight ? 'text-slate-400' : 'text-slate-300'}`}>
-                MAROC
-              </span>
+          <div className="flex items-center gap-1.5 mt-1.5">
+            <span className="text-[10px] sm:text-[11.5px] font-black uppercase tracking-wider text-[#E11D2A] inline-flex items-center">
+              AGENT GÉNÉRAL AXA MARRAKECH
             </span>
           </div>
         )}

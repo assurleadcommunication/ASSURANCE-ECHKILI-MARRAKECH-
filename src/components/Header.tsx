@@ -17,7 +17,9 @@ import {
   Briefcase,
   Users,
   HardHat,
-  ChevronRight
+  ChevronRight,
+  Plane,
+  TrendingUp
 } from 'lucide-react';
 import Logo from './Logo';
 import { AGENCY_INFO } from '../data/content';
@@ -27,6 +29,8 @@ interface HeaderProps {
   onOpenDevis: (type?: 'auto' | 'habitation' | 'sante' | 'pro') => void;
   onOpenAppointment: () => void;
   onOpenSinistre: () => void;
+  onOpenProductPage?: (solutionId: string) => void;
+  onGoHome?: () => void;
   activeSection?: string;
 }
 
@@ -35,6 +39,8 @@ export default function Header({
   onOpenDevis, 
   onOpenAppointment, 
   onOpenSinistre,
+  onOpenProductPage,
+  onGoHome,
   activeSection = '' 
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -65,9 +71,27 @@ export default function Header({
 
   const handleNavClick = (targetId: string) => {
     closeAllMenus();
-    const el = document.getElementById(targetId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    if (targetId === 'accueil' && onGoHome) {
+      onGoHome();
+      return;
+    }
+    if (onGoHome) {
+      onGoHome();
+    }
+    setTimeout(() => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 50);
+  };
+
+  const handleProductClick = (id: string, fallbackDevis: 'auto' | 'habitation' | 'sante' | 'pro') => {
+    closeAllMenus();
+    if (onOpenProductPage) {
+      onOpenProductPage(id);
+    } else {
+      onOpenDevis(fallbackDevis);
     }
   };
 
@@ -77,7 +101,7 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Main Logo */}
-          <a href="#" className="flex-shrink-0" onClick={() => handleNavClick('accueil')}>
+          <a href="#" className="flex-shrink-0" onClick={(e) => { e.preventDefault(); handleNavClick('accueil'); }}>
             <Logo variant="light" />
           </a>
 
@@ -95,14 +119,14 @@ export default function Header({
               </div>
               <div className="text-[13px] leading-snug">
                 <div className="font-bold text-[#0F2B5C] group-hover:text-[#0072F5] transition-colors">Notre bureau</div>
-                <div className="text-slate-500 font-medium text-[12px]">Rdc mag 2, Imm Erraha N°8</div>
-                <div className="text-slate-500 text-[12px]">Av Guemassa, Mhamid Marrakech</div>
+                <div className="text-slate-500 font-medium text-[12px]">942, Lot AL MASSAR</div>
+                <div className="text-slate-500 text-[12px]">Route de Safi Marrakech</div>
               </div>
             </a>
 
             {/* Écrivez nous */}
             <a 
-              href={`mailto:${AGENCY_INFO.email1}`}
+              href="mailto:contact@assurancesechkili.ma"
               className="flex items-start gap-2.5 text-left group hover:opacity-85 transition-opacity"
             >
               <div className="w-8 h-8 rounded-full bg-sky-50 text-[#0072F5] flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-sky-100 transition-colors">
@@ -110,7 +134,7 @@ export default function Header({
               </div>
               <div className="text-[13px] leading-snug">
                 <div className="font-bold text-[#0F2B5C] group-hover:text-[#0072F5] transition-colors">Écrivez nous</div>
-                <div className="text-slate-500 text-[12px] font-medium">{AGENCY_INFO.email1}</div>
+                <div className="text-slate-500 text-[12px] font-medium">contact@assurancesechkili.ma</div>
               </div>
             </a>
 
@@ -121,15 +145,13 @@ export default function Header({
               </div>
               <div className="text-[13px] leading-snug">
                 <div className="font-bold text-[#0F2B5C]">Appelez nous</div>
-                <div className="text-slate-700 font-bold text-[12px]">
-                  <a href={`tel:${AGENCY_INFO.phone1}`} className="hover:text-[#0072F5] transition-colors">
-                    Fixe : 05 25 36 30 61
+                <div className="text-slate-700 font-medium text-[12px]">
+                  <a href="tel:+212524355901" className="hover:text-[#0072F5] transition-colors">
+                    Tél : +212 524 355 901/902
                   </a>
                 </div>
-                <div className="text-slate-600 font-medium text-[11px]">
-                  <a href={`tel:${AGENCY_INFO.phone2}`} className="hover:text-[#0072F5] transition-colors">
-                    Gsm : 06 67 76 21 24
-                  </a>
+                <div className="text-slate-500 font-normal text-[11px]">
+                  <span>Fax : 0524 355 901/902/903</span>
                 </div>
               </div>
             </div>
@@ -154,21 +176,34 @@ export default function Header({
         </div>
       </div>
 
-      {/* 2. PRIMARY NAV BAR (Dark Navy Background #102B54) */}
-      <nav className={`w-full bg-[#102B54] text-white transition-all duration-200 ${isScrolled ? 'sticky top-0 z-50 shadow-md' : ''}`}>
+      {/* 2. PRIMARY NAV BAR (Dark Navy Background #102B54 - Flottante / Sticky au scroll) */}
+      <nav className={`w-full bg-[#102B54] text-white transition-all duration-300 ${isScrolled ? 'sticky top-0 z-50 shadow-xl border-b border-white/10 backdrop-blur-md bg-[#102B54]/95' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[52px]">
-            {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center h-full space-x-0.5">
-              {/* Accueil */}
-              <button
-                onClick={() => handleNavClick('accueil')}
-                className={`h-full px-5 text-[14px] font-semibold flex items-center transition-colors ${
-                  activeSection === '' || activeSection === 'accueil' ? 'bg-[#24477D] text-white shadow-inner' : 'text-slate-200 hover:bg-[#1A3868] hover:text-white'
-                }`}
-              >
-                Accueil
-              </button>
+          <div className="flex items-center justify-between h-[54px]">
+            {/* Left Section: Scrolled Logo (Desktop) + Navigation Links */}
+            <div className="flex items-center h-full">
+              {/* Scrolled Floating Logo (Floats into view when scrolling down) */}
+              {isScrolled && (
+                <button
+                  onClick={() => handleNavClick('accueil')}
+                  className="hidden lg:flex items-center mr-4 py-0.5 group transition-all duration-300 hover:opacity-90 text-left"
+                  title="Assurances Echkili - Accueil"
+                >
+                  <Logo variant="dark" showSubtext={true} className="scale-90 origin-left" />
+                </button>
+              )}
+
+              {/* Desktop Navigation Links */}
+              <div className="hidden lg:flex items-center h-full space-x-0.5">
+                {/* Accueil */}
+                <button
+                  onClick={() => handleNavClick('accueil')}
+                  className={`h-full px-4 text-[14px] font-semibold flex items-center transition-colors ${
+                    activeSection === '' || activeSection === 'accueil' ? 'bg-[#24477D] text-white shadow-inner' : 'text-slate-200 hover:bg-[#1A3868] hover:text-white'
+                  }`}
+                >
+                  Accueil
+                </button>
 
               {/* Assurances Echkili + */}
               <div className="relative h-full" onMouseLeave={() => setOpenDropdown(null)}>
@@ -238,25 +273,54 @@ export default function Header({
                 {openDropdown === 'particuliers' && (
                   <div className="absolute left-0 top-full w-72 bg-white text-slate-800 rounded-b-lg shadow-xl border border-slate-100 py-2 z-50 animate-fadeIn">
                     <button 
-                      onClick={() => { onOpenDevis('auto'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('auto', 'auto')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <Car className="w-4 h-4 text-[#0072F5]" />
-                      <span>Assurance Auto & Moto (0 km)</span>
+                      <div className="flex items-center gap-2.5">
+                        <Car className="w-4 h-4 text-[#0072F5]" />
+                        <span>Assurance Auto & Moto (0 km)</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
-                      onClick={() => { onOpenDevis('habitation'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('habitation', 'habitation')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <Home className="w-4 h-4 text-[#0072F5]" />
-                      <span>Habitation Manzilouna</span>
+                      <div className="flex items-center gap-2.5">
+                        <Home className="w-4 h-4 text-[#0072F5]" />
+                        <span>Habitation Manzilouna</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
-                      onClick={() => { onOpenDevis('sante'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('sante', 'sante')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <HeartPulse className="w-4 h-4 text-[#0072F5]" />
-                      <span>Santé & Complémentaire Maladie</span>
+                      <div className="flex items-center gap-2.5">
+                        <HeartPulse className="w-4 h-4 text-[#0072F5]" />
+                        <span>Santé & Complémentaire Maladie</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
+                    </button>
+                    <button 
+                      onClick={() => handleProductClick('voyage', 'auto')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Plane className="w-4 h-4 text-[#0072F5]" />
+                        <span>Assistance Voyage Schengen</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
+                    </button>
+                    <button 
+                      onClick={() => handleProductClick('epargne', 'auto')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <TrendingUp className="w-4 h-4 text-[#0072F5]" />
+                        <span>Épargne & Retraite Futuris</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
                       onClick={() => { handleNavClick('solutions'); }}
@@ -284,25 +348,34 @@ export default function Header({
                 {openDropdown === 'pros' && (
                   <div className="absolute left-0 top-full w-72 bg-white text-slate-800 rounded-b-lg shadow-xl border border-slate-100 py-2 z-50 animate-fadeIn">
                     <button 
-                      onClick={() => { onOpenDevis('pro'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('multirisque-pro', 'pro')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <Briefcase className="w-4 h-4 text-[#0072F5]" />
-                      <span>Multirisque Professionnelle</span>
+                      <div className="flex items-center gap-2.5">
+                        <Briefcase className="w-4 h-4 text-[#0072F5]" />
+                        <span>Multirisque Professionnelle</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
-                      onClick={() => { onOpenDevis('pro'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('accidents-travail', 'pro')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <Users className="w-4 h-4 text-[#0072F5]" />
-                      <span>Accidents du Travail (Loi 18-12)</span>
+                      <div className="flex items-center gap-2.5">
+                        <Users className="w-4 h-4 text-[#0072F5]" />
+                        <span>Accidents du Travail (Loi 18-12)</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
-                      onClick={() => { handleNavClick('solutions'); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('rc-pro', 'pro')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <ShieldCheck className="w-4 h-4 text-[#0072F5]" />
-                      <span>Responsabilité Civile Pro & Décennale</span>
+                      <div className="flex items-center gap-2.5">
+                        <ShieldCheck className="w-4 h-4 text-[#0072F5]" />
+                        <span>Responsabilité Civile Pro & Décennale</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                   </div>
                 )}
@@ -323,25 +396,34 @@ export default function Header({
                 {openDropdown === 'entreprises' && (
                   <div className="absolute left-0 top-full w-72 bg-white text-slate-800 rounded-b-lg shadow-xl border border-slate-100 py-2 z-50 animate-fadeIn">
                     <button 
-                      onClick={() => { onOpenDevis('pro'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('flotte-auto', 'pro')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <Car className="w-4 h-4 text-[#0072F5]" />
-                      <span>Flottes Automobiles (dès 3 véhicules)</span>
+                      <div className="flex items-center gap-2.5">
+                        <Car className="w-4 h-4 text-[#0072F5]" />
+                        <span>Flottes Automobiles (dès 3 véhicules)</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
-                      onClick={() => { onOpenDevis('pro'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('tous-risques-chantier', 'pro')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <HardHat className="w-4 h-4 text-[#0072F5]" />
-                      <span>Tous Risques Chantier (TRC & BTP)</span>
+                      <div className="flex items-center gap-2.5">
+                        <HardHat className="w-4 h-4 text-[#0072F5]" />
+                        <span>Tous Risques Chantier (TRC & BTP)</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                     <button 
-                      onClick={() => { onOpenDevis('pro'); closeAllMenus(); }}
-                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center gap-2.5"
+                      onClick={() => handleProductClick('prevoyance-entreprise', 'pro')}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-[#0072F5] flex items-center justify-between group"
                     >
-                      <Users className="w-4 h-4 text-[#0072F5]" />
-                      <span>Retraite & Prévoyance Collective</span>
+                      <div className="flex items-center gap-2.5">
+                        <Users className="w-4 h-4 text-[#0072F5]" />
+                        <span>Retraite & Prévoyance Collective</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0072F5] group-hover:translate-x-0.5 transition-all" />
                     </button>
                   </div>
                 )}
@@ -355,16 +437,31 @@ export default function Header({
                 Contact
               </button>
             </div>
+          </div>
 
-            {/* Mobile Branding Text on Scrolled Nav */}
+            {/* Mobile Branding with Logo on Scrolled / Sticky Nav */}
             <div className="flex lg:hidden items-center">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Agent Général AXA Marrakech
-              </span>
+              <button
+                onClick={() => handleNavClick('accueil')}
+                className="flex items-center text-left py-0.5"
+                title="Assurances Echkili - Accueil"
+              >
+                <Logo variant="dark" showSubtext={false} className="scale-80 origin-left" />
+              </button>
             </div>
 
-            {/* Right Icons: Search, WhatsApp, Social Links */}
-            <div className="flex items-center gap-3">
+            {/* Right Icons: Floating CTA, Search, WhatsApp, Social Links, Mobile Menu */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Scrolled Floating CTA Button (Desktop) */}
+              {isScrolled && (
+                <button
+                  onClick={() => onOpenDevis('auto')}
+                  className="hidden xl:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-[#0072F5] hover:bg-[#005ec4] text-white text-xs font-bold shadow-md transition-all active:scale-95 mr-1"
+                >
+                  <span>Devis Express</span>
+                </button>
+              )}
+
               {/* Search Icon */}
               <button
                 onClick={onOpenSearch}
@@ -384,6 +481,15 @@ export default function Header({
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
+
+              {/* Mobile Menu Toggle in Sticky Nav */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-1.5 text-slate-200 hover:text-white lg:hidden hover:bg-[#1A3868] rounded-md transition-colors"
+                aria-label="Menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
 
               {/* Social Icons */}
               <a
@@ -502,14 +608,17 @@ export default function Header({
                 </button>
                 {mobileAccordion === 'particuliers' && (
                   <div className="pl-6 py-1 space-y-2 text-sm text-slate-600 bg-slate-50/70 rounded-md">
-                    <button onClick={() => { onOpenDevis('auto'); setMobileMenuOpen(false); }} className="block w-full text-left py-1 hover:text-[#0072F5]">
-                      Assurance Automobile & Moto
+                    <button onClick={() => handleProductClick('auto', 'auto')} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                      Assurance Automobile & Moto (0 km)
                     </button>
-                    <button onClick={() => { onOpenDevis('habitation'); setMobileMenuOpen(false); }} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                    <button onClick={() => handleProductClick('habitation', 'habitation')} className="block w-full text-left py-1 hover:text-[#0072F5]">
                       Habitation Manzilouna
                     </button>
-                    <button onClick={() => { onOpenDevis('sante'); setMobileMenuOpen(false); }} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                    <button onClick={() => handleProductClick('sante', 'sante')} className="block w-full text-left py-1 hover:text-[#0072F5]">
                       Santé Particuliers
+                    </button>
+                    <button onClick={() => handleProductClick('voyage', 'auto')} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                      Assistance Voyage Schengen
                     </button>
                     <button onClick={() => handleNavClick('solutions')} className="block w-full text-left py-1 font-semibold text-[#0F2B5C]">
                       Toutes les offres Particuliers →
@@ -529,14 +638,20 @@ export default function Header({
                 </button>
                 {mobileAccordion === 'pros' && (
                   <div className="pl-6 py-1 space-y-2 text-sm text-slate-600 bg-slate-50/70 rounded-md">
-                    <button onClick={() => { onOpenDevis('pro'); setMobileMenuOpen(false); }} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                    <button onClick={() => handleProductClick('multirisque-pro', 'pro')} className="block w-full text-left py-1 hover:text-[#0072F5]">
                       Multirisque Professionnelle (Riads & Commerces)
                     </button>
-                    <button onClick={() => { onOpenDevis('pro'); setMobileMenuOpen(false); }} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                    <button onClick={() => handleProductClick('accidents-travail', 'pro')} className="block w-full text-left py-1 hover:text-[#0072F5]">
                       Accidents du Travail (Loi 18-12)
                     </button>
-                    <button onClick={() => { onOpenDevis('pro'); setMobileMenuOpen(false); }} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                    <button onClick={() => handleProductClick('rc-pro', 'pro')} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                      Responsabilité Civile Pro & Décennale
+                    </button>
+                    <button onClick={() => handleProductClick('flotte-auto', 'pro')} className="block w-full text-left py-1 hover:text-[#0072F5]">
                       Flottes Automobiles Entreprise
+                    </button>
+                    <button onClick={() => handleProductClick('tous-risques-chantier', 'pro')} className="block w-full text-left py-1 hover:text-[#0072F5]">
+                      Tous Risques Chantier (TRC & BTP)
                     </button>
                     <button onClick={() => handleNavClick('solutions')} className="block w-full text-left py-1 font-semibold text-[#0F2B5C]">
                       Toutes les offres Pros & Entreprises →
@@ -563,8 +678,15 @@ export default function Header({
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#0072F5]" />
-                <span>Rdc mag 2, Imm Erraha N°8, Av Guemassa Mhamid</span>
+                <MapPin className="w-3.5 h-3.5 text-[#0072F5] flex-shrink-0" />
+                <a 
+                  href={AGENCY_INFO.googleMapsUrl} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="hover:text-[#0072F5] transition-colors"
+                >
+                  Rdc mag 2, Imm Erraha N°8, Av Guemassa Mhamid
+                </a>
               </div>
               <div className="flex items-center gap-2 text-emerald-600 font-semibold pt-1">
                 <MessageCircle className="w-3.5 h-3.5" />

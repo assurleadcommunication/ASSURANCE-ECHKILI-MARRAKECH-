@@ -6,20 +6,35 @@ interface FooterProps {
   onOpenDevis: (type?: 'auto' | 'habitation' | 'sante' | 'pro') => void;
   onOpenSinistre: () => void;
   onOpenAppointment: () => void;
+  onOpenProductPage?: (solutionId: string) => void;
+  onGoHome?: () => void;
 }
 
 export default function Footer({
   onOpenDevis,
   onOpenSinistre,
   onOpenAppointment,
+  onOpenProductPage,
+  onGoHome,
 }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavClick = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (onGoHome) onGoHome();
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  };
+
+  const handleProduct = (id: string, fallbackDevis: 'auto' | 'habitation' | 'sante' | 'pro') => {
+    if (onOpenProductPage) {
+      onOpenProductPage(id);
+    } else {
+      onOpenDevis(fallbackDevis);
+    }
   };
 
   return (
@@ -48,32 +63,32 @@ export default function Footer({
             </h4>
             <ul className="space-y-2 text-xs text-slate-300">
               <li>
-                <button onClick={() => onOpenDevis('auto')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('auto', 'auto')} className="hover:text-white hover:underline text-left">
                   Assurance Automobile & Dépannage 0 km
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenDevis('auto')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('moto', 'auto')} className="hover:text-white hover:underline text-left">
                   Assurance Moto & Scooter Marrakech
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenDevis('habitation')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('habitation', 'habitation')} className="hover:text-white hover:underline text-left">
                   Multirisque Habitation Manzilouna & Riads
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenDevis('sante')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('sante', 'sante')} className="hover:text-white hover:underline text-left">
                   Complémentaire Santé & Cliniques Privées
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavClick('solutions')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('epargne', 'auto')} className="hover:text-white hover:underline text-left">
                   Épargne & Retraite Futuris AXA
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavClick('solutions')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('voyage', 'auto')} className="hover:text-white hover:underline text-left">
                   Assistance Voyage Visa Schengen
                 </button>
               </li>
@@ -87,22 +102,22 @@ export default function Footer({
             </h4>
             <ul className="space-y-2 text-xs text-slate-300">
               <li>
-                <button onClick={() => onOpenDevis('pro')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('multirisque-pro', 'pro')} className="hover:text-white hover:underline text-left">
                   Multirisque Professionnelle (Commerces & Riads)
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenDevis('pro')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('accidents-travail', 'pro')} className="hover:text-white hover:underline text-left">
                   Accidents du Travail (Loi 18-12)
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenDevis('pro')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('rc-pro', 'pro')} className="hover:text-white hover:underline text-left">
                   Responsabilité Civile Pro & Décennale BTP
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenDevis('pro')} className="hover:text-white hover:underline text-left">
+                <button onClick={() => handleProduct('flotte-auto', 'pro')} className="hover:text-white hover:underline text-left">
                   Flotte Automobile Entreprise
                 </button>
               </li>
@@ -128,7 +143,14 @@ export default function Footer({
             <div className="space-y-2.5 text-xs text-slate-300">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#0072F5] flex-shrink-0 mt-0.5" />
-                <span>{AGENCY_INFO.address}</span>
+                <a 
+                  href={AGENCY_INFO.googleMapsUrl} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="hover:text-white transition-colors"
+                >
+                  {AGENCY_INFO.address} <span className="text-[#0072F5] font-semibold text-[10px] block mt-0.5">Ouvrir dans Google Maps ↗</span>
+                </a>
               </div>
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-[#0072F5] flex-shrink-0 mt-0.5" />

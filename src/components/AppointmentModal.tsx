@@ -87,7 +87,14 @@ export default function AppointmentModal({ onClose }: AppointmentModalProps) {
               </p>
               
               <div className="p-4 bg-slate-50 rounded-xl max-w-md mx-auto text-xs text-slate-700 text-left space-y-1.5 border border-slate-200">
-                <div><strong>Lieu / Canal :</strong> {meetingType === 'agence' ? 'Agence Echkili Assurances, Rdc magasin 2, Imm Erraha N°8, Av Guemassa, Mhamid Marrakech' : meetingType === 'telephone' ? `Appel au ${phone}` : 'Visioconférence'}</div>
+                <div><strong>Lieu / Canal :</strong> {meetingType === 'agence' ? (
+                  <span>
+                    Agence Echkili Assurances, Rdc magasin 2, Imm Erraha N°8, Av Guemassa, Mhamid Marrakech{' '}
+                    <a href={AGENCY_INFO.googleMapsDirUrl} target="_blank" rel="noreferrer" className="text-[#0072F5] font-bold underline inline-flex items-center gap-1 ml-1">
+                      Itinéraire GPS ↗
+                    </a>
+                  </span>
+                ) : meetingType === 'telephone' ? `Appel au ${phone}` : 'Visioconférence'}</div>
                 <div><strong>Téléphone Agence :</strong> 05 25 36 30 61 / 06 67 76 21 24</div>
               </div>
 

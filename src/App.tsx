@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import HeroSlider from './components/HeroSlider';
 import NotreAgenceSection from './components/NotreAgenceSection';
@@ -12,14 +12,15 @@ import SolutionsSection from './components/SolutionsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import FloatingActions from './components/FloatingActions';
+import ProductPage from './components/ProductPage';
 
 import DevisModal from './components/DevisModal';
 import AppointmentModal from './components/AppointmentModal';
 import SinistreGuideModal from './components/SinistreGuideModal';
 import SearchModal from './components/SearchModal';
-import SolutionDetailModal from './components/SolutionDetailModal';
 
 import { InsuranceSolution } from './types';
+import { SOLUTIONS_LIST } from './data/content';
 
 export default function App() {
   // Modal states
@@ -28,15 +29,59 @@ export default function App() {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isSinistreOpen, setIsSinistreOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedSolution, setSelectedSolution] = useState<InsuranceSolution | null>(null);
+
+  // Independent Product Page state (synced with URL hash)
+  const [activeProduct, setActiveProduct] = useState<InsuranceSolution | null>(null);
+
+  // Synchronisation with browser hash (#produit-[id]) for bookmarking, back/forward buttons and direct sharing
+  useEffect(() => {
+    const handleHashSync = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#produit-')) {
+        const prodId = hash.replace('#produit-', '');
+        const found = SOLUTIONS_LIST.find((s) => s.id === prodId);
+        if (found) {
+          setActiveProduct(found);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+      if (!hash || !hash.startsWith('#produit-')) {
+        setActiveProduct(null);
+      }
+    };
+
+    handleHashSync();
+    window.addEventListener('hashchange', handleHashSync);
+    return () => window.removeEventListener('hashchange', handleHashSync);
+  }, []);
 
   const handleOpenDevis = (type: 'auto' | 'habitation' | 'sante' | 'pro' = 'auto') => {
     setDevisType(type);
     setIsDevisOpen(true);
   };
 
-  const handleSelectSolution = (solution: InsuranceSolution) => {
-    setSelectedSolution(solution);
+  const handleOpenProductPage = (solution: InsuranceSolution) => {
+    setActiveProduct(solution);
+    window.location.hash = `produit-${solution.id}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenProductById = (id: string) => {
+    const found = SOLUTIONS_LIST.find((s) => s.id === id);
+    if (found) {
+      handleOpenProductPage(found);
+    } else {
+      handleOpenDevis('auto');
+    }
+  };
+
+  const handleBackToHome = () => {
+    setActiveProduct(null);
+    if (window.location.hash.startsWith('#produit-')) {
+      window.history.pushState(null, '', window.location.pathname);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -47,33 +92,47 @@ export default function App() {
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenAppointment={() => setIsAppointmentOpen(true)}
         onOpenSinistre={() => setIsSinistreOpen(true)}
+        onOpenProductPage={handleOpenProductById}
+        onGoHome={handleBackToHome}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area: Either Independent Product Page OR Full Home Page */}
       <main className="flex-1">
-        {/* Hero Slider with 3 Slides (Auto, Pro/Riad, Famille/Santé) */}
-        <HeroSlider
-          onOpenDevis={handleOpenDevis}
-          onOpenAppointment={() => setIsAppointmentOpen(true)}
-        />
+        {activeProduct ? (
+          <ProductPage
+            solution={activeProduct}
+            onBack={handleBackToHome}
+            onSelectOtherProduct={handleOpenProductPage}
+            onOpenDevis={handleOpenDevis}
+            onOpenAppointment={() => setIsAppointmentOpen(true)}
+          />
+        ) : (
+          <>
+            {/* Hero Slider with 3 Slides (Auto, Pro/Riad, Famille/Santé) */}
+            <HeroSlider
+              onOpenDevis={handleOpenDevis}
+              onOpenAppointment={() => setIsAppointmentOpen(true)}
+            />
 
-        {/* Missions & Valeurs Section (Monté d'un pas, directement sous le Hero) */}
-        <ValuesSection />
+            {/* Missions & Valeurs Section (Directement sous le Hero) */}
+            <ValuesSection />
 
-        {/* Section Stylisée Notre Agence (Matching Screenshot) */}
-        <NotreAgenceSection
-          onOpenSinistre={() => setIsSinistreOpen(true)}
-          onOpenAppointment={() => setIsAppointmentOpen(true)}
-        />
+            {/* Section Stylisée Notre Agence */}
+            <NotreAgenceSection
+              onOpenSinistre={() => setIsSinistreOpen(true)}
+              onOpenAppointment={() => setIsAppointmentOpen(true)}
+            />
 
-        {/* Catalogue AXA Maroc Solutions (Matching Screenshots 5 & 6) */}
-        <SolutionsSection
-          onSelectSolution={handleSelectSolution}
-          onOpenDevis={handleOpenDevis}
-        />
+            {/* Catalogue AXA Maroc Solutions */}
+            <SolutionsSection
+              onSelectSolution={handleOpenProductPage}
+              onOpenDevis={handleOpenDevis}
+            />
 
-        {/* Contact Form & Direct Inquiries */}
-        <ContactSection />
+            {/* Contact Form & Direct Inquiries */}
+            <ContactSection />
+          </>
+        )}
       </main>
 
       {/* Official Agency Footer */}
@@ -81,6 +140,8 @@ export default function App() {
         onOpenDevis={handleOpenDevis}
         onOpenSinistre={() => setIsSinistreOpen(true)}
         onOpenAppointment={() => setIsAppointmentOpen(true)}
+        onOpenProductPage={handleOpenProductById}
+        onGoHome={handleBackToHome}
       />
 
       {/* Persistent Floating Quick Buttons (WhatsApp + Scroll To Top + Mobile Dock) */}
@@ -112,15 +173,7 @@ export default function App() {
       {isSearchOpen && (
         <SearchModal
           onClose={() => setIsSearchOpen(false)}
-          onSelectSolution={handleSelectSolution}
-          onOpenDevis={handleOpenDevis}
-        />
-      )}
-
-      {selectedSolution && (
-        <SolutionDetailModal
-          solution={selectedSolution}
-          onClose={() => setSelectedSolution(null)}
+          onSelectSolution={handleOpenProductPage}
           onOpenDevis={handleOpenDevis}
         />
       )}

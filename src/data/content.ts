@@ -23,7 +23,8 @@ export const AGENCY_INFO = {
     lat: 31.6025,
     lng: -8.0345,
   },
-  googleMapsUrl: 'https://maps.google.com/?q=Imm+Erraha+Av+Guemassa+Mhamid+Marrakech',
+  googleMapsUrl: 'https://maps.google.com/?q=31.6025,-8.0345+(Echkili+Assurances+AXA+Maroc)',
+  googleMapsDirUrl: 'https://www.google.com/maps/dir/?api=1&destination=31.6025,-8.0345',
 };
 
 export const HERO_SLIDES: HeroSlide[] = [
